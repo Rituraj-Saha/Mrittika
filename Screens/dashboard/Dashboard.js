@@ -5,6 +5,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import React from 'react';
@@ -17,6 +18,7 @@ import CustomCarousal from '../../components/Carousal/CustomCarousal';
 import CustomFlatList from '../../components/CustomFlatList/CustomFlatList';
 import Svg, {SvgXml} from 'react-native-svg';
 import HeaderTextComponent from '../../components/HeaderTextComponent/HeaderTextComponent';
+import {useNavigation} from '@react-navigation/native';
 
 const Dashboard = () => {
   const theme = useTheme();
@@ -25,6 +27,7 @@ const Dashboard = () => {
     () => ['#B0604D', '#899F9C', '#B3C680', '#5C6265', '#F5D399', '#F1F1F1'],
     [],
   );
+  const navigation = useNavigation();
   const carousalConfig = React.useMemo(
     () => ({
       autoPlayInterval: 2000,
@@ -88,6 +91,9 @@ const Dashboard = () => {
     ),
     [],
   );
+  const handleGridViewMore = navigationInfo => {
+    navigation.navigate(navigationInfo.mKey);
+  };
   const renderGridItem = React.useCallback(
     ({item, index}) => (
       <View
@@ -98,8 +104,16 @@ const Dashboard = () => {
           width: scale(100, 0),
           height: scale(150, 0),
           margin: scale(5, 0),
+          borderWidth: 1,
         }}>
-        <Text style={{textAlign: 'center', fontSize: 30}}>{index}</Text>
+        <Text style={{textAlign: 'center', fontSize: 30}}>{item.mktName}</Text>
+        <TouchableOpacity
+          onPress={() => {
+            console.log('Item redirection ', item);
+            handleGridViewMore({mKey: item.redirection});
+          }}>
+          <Text>View More</Text>
+        </TouchableOpacity>
       </View>
     ),
     [],
@@ -137,16 +151,14 @@ const Dashboard = () => {
             </>
           ) : item.viewType == 'grid' ? (
             <View>
-              <HeaderTextComponent
-                headerText={`Hand picked scpecially for you`}
-              />
+              <HeaderTextComponent headerText={`Local Market Near You..`} />
               <View style={{paddingHorizontal: scale(10, 0)}}>
                 <CustomFlatList
                   config={{
                     numColumns: item?.NumberOfColumns,
                     scrollEnabled: false,
                   }}
-                  data={defaultDataWith6Colors}
+                  data={item.content}
                   renderItem={renderGridItem}
                 />
               </View>
