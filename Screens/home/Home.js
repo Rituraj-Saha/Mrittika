@@ -16,6 +16,9 @@ const Stack = createNativeStackNavigator();
 const Dashboard = register({loader: () => import('../dashboard/Dashboard')});
 const Account = register({loader: () => import('../account/Account')});
 const History = register({loader: () => import('../history/History')});
+const MKTDEEPDIVE = register({
+  loader: () => import('../deepdive/LocalMarketDeepDive/LocalMktDeepDive'),
+});
 
 const TopBar = () => {
   const navigation = useNavigation();
@@ -174,6 +177,10 @@ const Home = () => {
             <Stack.Screen
               name={NAVIGATION_SCREEN_KEY.HISTORY}
               component={History}
+            />
+            <Stack.Screen
+              name={NAVIGATION_SCREEN_KEY.MKTDEEPDIVE}
+              component={MKTDEEPDIVE}
             />
           </Stack.Navigator>
         </View>
