@@ -11,7 +11,7 @@ import {
 import React from 'react';
 import MktCard from './MktCard';
 import {DASHBOARD_PAYLOAD} from '../../samplePayloads/dasboardPayload';
-import {useTheme} from 'react-native-paper';
+import {Chip, useTheme} from 'react-native-paper';
 import Carousel from 'react-native-reanimated-carousel';
 import {scale} from '../../utils/responsiveDymentions';
 import CustomCarousal from '../../components/Carousal/CustomCarousal';
@@ -76,7 +76,7 @@ const Dashboard = () => {
           margin: scale(5, 0),
           alignItems: 'center',
         }}>
-        {console.log(`isTopCat: ${isTopCategoryNavigation}`)}
+        {/* {console.log(`isTopCat: ${isTopCategoryNavigation}`)} */}
         {isTopCategoryNavigation ? (
           <>
             <SvgXml height="50%" width="50%" xml={item.icon}></SvgXml>
@@ -92,27 +92,58 @@ const Dashboard = () => {
     [],
   );
   const handleGridViewMore = navigationInfo => {
-    navigation.navigate(navigationInfo.mKey);
+    navigation.navigate(navigationInfo.navKey, navigationInfo);
   };
   const renderGridItem = React.useCallback(
     ({item, index}) => (
       <View
+        key={index}
         style={{
           flex: 1,
           justifyContent: 'center',
           backgroundColor: item,
-          width: scale(100, 0),
-          height: scale(150, 0),
+          // width: scale(100, 0),
+          height: scale(230, 0),
           margin: scale(5, 0),
           borderWidth: 1,
         }}>
-        <Text style={{textAlign: 'center', fontSize: 30}}>{item.mktName}</Text>
-        <TouchableOpacity
-          onPress={() => {
-            console.log('Item redirection ', item);
-            handleGridViewMore({mKey: item.redirection});
+        <Text style={{textAlign: 'center'}}>{item.mktName}</Text>
+        <View style={{flex: 0.6, borderWidth: 1}}></View>
+        <View
+          style={{
+            flex: 0.2,
+            // borderWidth: 1,
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
           }}>
-          <Text>View More</Text>
+          {item?.categoryTags.length > 0 &&
+            item?.categoryTags?.map((tag, index) => {
+              return (
+                <View
+                  key={index}
+                  style={{
+                    flex: 1,
+                    height: scale(20, 0),
+                    marginHorizontal: scale(3, 0),
+                    borderRadius: scale(12, 0),
+                    backgroundColor: theme.colors.secondaryContainer,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                  // textStyle={{fontSize: scale(25, 0)}}
+                >
+                  <Text style={{fontSize: scale(12, 0)}}>{tag}</Text>
+                </View>
+              );
+            })}
+        </View>
+        <TouchableOpacity
+          style={{flex: 0.2, alignItems: 'center', justifyContent: 'center'}}
+          onPress={() => {
+            handleGridViewMore(item.redirection);
+          }}>
+          <Text style={{fontSize: scale(18, 0)}}>Get In The Market</Text>
         </TouchableOpacity>
       </View>
     ),
