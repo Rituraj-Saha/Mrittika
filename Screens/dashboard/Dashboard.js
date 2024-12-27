@@ -152,7 +152,7 @@ const Dashboard = () => {
   return (
     <View style={styles.container}>
       <ScrollView>
-        {DASHBOARD_PAYLOAD.map((item, key) => {
+        {DASHBOARD_PAYLOAD.map((item, index) => {
           return item.viewType == 'carousal' ? (
             <CustomCarousal
               config={carousalConfig}
@@ -185,6 +185,7 @@ const Dashboard = () => {
               <HeaderTextComponent headerText={`Local Market Near You..`} />
               <View style={{paddingHorizontal: scale(10, 0)}}>
                 <CustomFlatList
+                  key={index}
                   config={{
                     numColumns: item?.NumberOfColumns,
                     scrollEnabled: false,
