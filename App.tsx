@@ -23,16 +23,20 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 import Home from './Screens/home/Home';
 import { PaperProvider } from 'react-native-paper';
+import { Provider } from 'react-redux';
+import { store } from './app/store';
 
 function App(): React.JSX.Element {
 
 
   return (
-    <PaperProvider>
-      <SafeAreaView>
-        <Home />
-      </SafeAreaView>
-    </PaperProvider>
+    <Provider store={store}>
+      <PaperProvider>
+        <SafeAreaView>
+          <Home />
+        </SafeAreaView>
+      </PaperProvider>
+    </Provider>
 
   );
 }
