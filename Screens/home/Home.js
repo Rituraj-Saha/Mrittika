@@ -22,6 +22,8 @@ import {SvgXml} from 'react-native-svg';
 import {cartSvg} from '../../constants/Svg';
 import useModal from '../../components/CustomModal/useModal';
 import CustomaModal from '../../components/CustomModal/CustomaModal';
+import {useDispatch, useSelector} from 'react-redux';
+import {resetCart} from '../../app/slice/cartSlice';
 const Stack = createNativeStackNavigator();
 
 const Dashboard = register({loader: () => import('../dashboard/Dashboard')});
@@ -38,6 +40,7 @@ const TopBar = props => {
   const styles = makeStyle(theme);
   const [isKeyboardVisible, setKeyboardVisible] = React.useState(false);
   const {open, openModal, close, closeModal} = props;
+  const cartItems = useSelector(state => state.cart.items);
   React.useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
@@ -90,7 +93,7 @@ const TopBar = props => {
             openModal();
           }}>
           <SvgXml height="100%" width="100%" xml={cartSvg}></SvgXml>
-          <Badge style={{position: 'absolute'}}>3</Badge>
+          <Badge style={{position: 'absolute'}}>{cartItems.length}</Badge>
         </TouchableOpacity>
       </View>
     </View>
@@ -122,7 +125,9 @@ const BottomBar = () => {
             styles.bottombarButtonImg,
             {
               backgroundColor:
-                mSelected == SELECTEDTAB.HISTORY ? COLORS.selected : 'white',
+                mSelected == SELECTEDTAB.HISTORY
+                  ? theme.colors.selected
+                  : 'white',
             },
           ]}>
           <IconButton
@@ -144,7 +149,7 @@ const BottomBar = () => {
             styles.bottombarButtonImg,
             {
               backgroundColor:
-                mSelected == SELECTEDTAB.HOME ? COLORS.selected : 'white',
+                mSelected == SELECTEDTAB.HOME ? theme.colors.selected : 'white',
             },
           ]}>
           <IconButton
@@ -166,7 +171,9 @@ const BottomBar = () => {
             styles.bottombarButtonImg,
             {
               backgroundColor:
-                mSelected == SELECTEDTAB.ACCOUNT ? COLORS.selected : 'white',
+                mSelected == SELECTEDTAB.ACCOUNT
+                  ? theme.colors.selected
+                  : 'white',
             },
           ]}>
           <IconButton
@@ -190,12 +197,15 @@ const Home = () => {
   const theme = useTheme();
   const styles = makeStyle(theme);
   const {open, close, openModal, closeModal} = useModal();
+  const cartItems = useSelector(state => state.cart.items);
+  const dispatch = useDispatch();
   return (
     <NavigationContainer>
       <View
         style={{
           minHeight: '100%',
           maxHeight: '100%',
+          backgroundColor: theme.colors.backgroundColor,
         }}>
         {/* <HomeScreen /> */}
         <TopBar
@@ -230,7 +240,15 @@ const Home = () => {
         <BottomBar />
         {open && (
           <CustomaModal open={open} closeModal={closeModal}>
-            <View style={{flex: 1}}></View>
+            <View style={{flex: 1}}>
+              {console.log('cartItems: ', cartItems)}
+              <TouchableOpacity
+                onPress={() => {
+                  dispatch(resetCart());
+                }}>
+                <Text>Reset</Text>
+              </TouchableOpacity>
+            </View>
           </CustomaModal>
         )}
       </View>
@@ -251,7 +269,7 @@ const makeStyle = theme =>
     mContainer: {
       flex: 0.8,
       // borderWidth: 1,
-      backgroundColor: 'white',
+      backgroundColor: theme.colors.backgroundColor,
     },
     bottombar: {
       flex: 0.1,
@@ -259,24 +277,24 @@ const makeStyle = theme =>
       borderTopStartRadius: scale(20, 0),
       borderTopEndRadius: scale(20, 0),
       // borderWidth: 1,
-      backgroundColor: 'white',
+      backgroundColor: theme.colors.backgroundColor,
       shadowOffset: {
         width: 0,
         height: 2,
       },
-      shadowColor: 'red',
+      shadowColor: theme.colors.selected,
       shadowOpacity: 0.21,
-      shadowRadius: 6.65,
-      elevation: 6,
+      shadowRadius: 10.65,
+      elevation: 16,
       padding: scale(10, 0),
       // margin: scale(5, 0),
       alignItems: 'center',
       justifyContent: 'center',
       gap: scale(50),
       borderTopStartRadius: scale(20, 0),
-      borderWidth: scale(2, 0),
+      borderWidth: scale(0.5, 0),
       borderBottomWidth: scale(0),
-      borderColor: COLORS.selected,
+      borderColor: theme.colors.selected,
       backgroundColor: '#fbfff3',
     },
     bottombarButton: {

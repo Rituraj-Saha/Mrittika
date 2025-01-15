@@ -11,17 +11,20 @@ export const MARKET_DEEPDIVE_PAYLOAD = {
       },
       items: [
         {
+          id: 1,
           name: 'Pabda',
           images: ['img1', 'img2', 'img3'],
           price: 200,
           discount: 20,
         },
         {
+          id: 2,
           name: 'ilish',
           images: ['img1', 'img2', 'img3'],
           price: 200,
         },
         {
+          id: 3,
           name: 'Koi',
           images: ['img1', 'img2', 'img3'],
           price: 200,
@@ -39,18 +42,21 @@ export const MARKET_DEEPDIVE_PAYLOAD = {
       },
       items: [
         {
+          id: 4,
           name: 'Pabda',
           images: ['img1', 'img2', 'img3'],
           price: 200,
           discount: 20,
         },
         {
+          id: 5,
           name: 'ilish',
           images: ['img1', 'img2', 'img3'],
           price: 200,
           discount: 20,
         },
         {
+          id: 6,
           name: 'Koi',
           images: ['img1', 'img2', 'img3'],
           price: 200,
@@ -68,18 +74,21 @@ export const MARKET_DEEPDIVE_PAYLOAD = {
       },
       items: [
         {
+          id: 7,
           name: 'Pabda',
           images: ['img1', 'img2', 'img3'],
           price: 200,
           discount: 20,
         },
         {
+          id: 8,
           name: 'ilish',
           images: ['img1', 'img2', 'img3'],
           price: 200,
           discount: 20,
         },
         {
+          id: 9,
           name: 'Koi',
           images: ['img1', 'img2', 'img3'],
           price: 200,
@@ -97,18 +106,21 @@ export const MARKET_DEEPDIVE_PAYLOAD = {
       },
       items: [
         {
+          id: 10,
           name: 'Pabda',
           images: ['img1', 'img2', 'img3'],
           price: 200,
           discount: 20,
         },
         {
+          id: 11,
           name: 'ilish',
           images: ['img1', 'img2', 'img3'],
           price: 200,
           discount: 20,
         },
         {
+          id: 12,
           name: 'Koi',
           images: ['img1', 'img2', 'img3'],
           price: 200,

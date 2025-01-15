@@ -22,16 +22,31 @@ import {
 
 } from 'react-native/Libraries/NewAppScreen';
 import Home from './Screens/home/Home';
-import { PaperProvider } from 'react-native-paper';
+import { DefaultTheme, PaperProvider } from 'react-native-paper';
 import { Provider } from 'react-redux';
-import { store } from './app/store';
+import { persistor, store } from './app/index';
+import { PersistGate } from 'redux-persist/integration/react';
+
 
 function App(): React.JSX.Element {
+  const theme = {
+    ...DefaultTheme,
+    roundness: 2,
+    colors: {
+      ...DefaultTheme.colors,
+      primary: '#3498db',
+      accent: '#f1c40f',
+      selected: "#fca100",
+      backgroundColor: "#ffffff",
+      headLineText: "#1a1a19"
+    },
 
+  }
 
   return (
     <Provider store={store}>
-      <PaperProvider>
+      <PersistGate loading={null} persistor={persistor} />
+      <PaperProvider theme={theme}>
         <SafeAreaView>
           <Home />
         </SafeAreaView>
