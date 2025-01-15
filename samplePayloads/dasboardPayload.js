@@ -55,21 +55,21 @@ export const DASHBOARD_PAYLOAD = [
     content: [
       {
         id: 1,
-        img: '',
-        mktName: 'Sample Mkt Name',
-        category: 'sample cat',
+        img: 'https://drive.google.com/thumbnail?id=1soO9PK1iadwupr39WOG2OKcMZVEz9_7Q',
+        mktName: 'Sodepur Station fish Market',
+        category: 'fish',
         redirection: {
           navKey: 'MktDeepDive',
           routeParam: {
-            marketName: 'Sample Mkt Name',
+            marketName: 'Sodepur Station fish Market',
           },
         },
-        categoryTags: ['Tag1', 'Tag2'],
+        categoryTags: ['Fish'],
       },
       {
         id: 2,
-        img: '',
-        mktName: 'Sample Mkt Name 2',
+        img: 'https://drive.google.com/thumbnail?id=1soO9PK1iadwupr39WOG2OKcMZVEz9_7Q',
+        mktName: 'Sukhchor Fish Market',
         category: 'sample cat',
         redirection: {
           navKey: 'MktDeepDive',
@@ -81,29 +81,59 @@ export const DASHBOARD_PAYLOAD = [
       },
       {
         id: 3,
-        img: '',
-        mktName: 'Sample Mkt Name 3',
-        category: 'sample cat',
+        img: 'https://drive.google.com/thumbnail?id=1soO9PK1iadwupr39WOG2OKcMZVEz9_7Q',
+        mktName: 'Bajar Para Fish Market',
+        category: 'Fish',
         redirection: {
           navKey: 'MktDeepDive',
           routeParam: {
             marketName: 'Sample Mkt Name',
           },
         },
-        categoryTags: ['Tag1', 'Tag2', 'Tag3', 'Tag4'],
+        categoryTags: ['Fish'],
       },
       {
         id: 4,
-        img: '',
-        mktName: 'Sample Mkt Name 4',
-        category: 'sample cat',
+        img: 'https://drive.google.com/thumbnail?id=1soO9PK1iadwupr39WOG2OKcMZVEz9_7Q',
+        mktName: 'Others',
+        category: 'Fish',
         redirection: {
           navKey: 'MktDeepDive',
           routeParam: {
             marketName: 'Sample Mkt Name',
           },
         },
-        categoryTags: ['Tag1', 'Tag2', 'Tag3', 'Tag4'],
+        categoryTags: ['Fish'],
+      },
+    ],
+  },
+  {
+    id: 2,
+    viewType: 'horizontalFlatList',
+    redirection: 'Info about where to redirect(click)',
+    visibility: true,
+    isTopCategoryNavigation: false,
+    headLine: 'Featured Product This Week',
+    content: [
+      {
+        id: 1,
+        name: 'Pabda',
+        images: ['img1', 'img2', 'img3'],
+        price: 200,
+        discount: 20,
+      },
+      {
+        id: 2,
+        name: 'ilish',
+        images: ['img1', 'img2', 'img3'],
+        price: 200,
+      },
+      {
+        id: 3,
+        name: 'Koi',
+        images: ['img1', 'img2', 'img3'],
+        price: 200,
+        discount: 20,
       },
     ],
   },

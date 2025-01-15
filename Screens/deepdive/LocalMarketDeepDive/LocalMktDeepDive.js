@@ -7,6 +7,8 @@ import CustomFlatList from '../../../components/CustomFlatList/CustomFlatList';
 import {MARKET_DEEPDIVE_PAYLOAD} from '../../../samplePayloads/MktDeepDivePayload';
 import CustomRadioGroup from '../../../components/CustomRadioGroup/CustomRadioGroup';
 import History from '../../history/History';
+import {useDispatch} from 'react-redux';
+import {addItem, removeItem} from '../../../app/slice/cartSlice';
 
 const ItemView = props => {
   const {name, images, price, discount, shopDetails} = props;
@@ -16,6 +18,11 @@ const ItemView = props => {
     setSelectedUnitIndex(idx);
   };
   const [crtIcon, setCrtIcon] = React.useState(true);
+  const [qty, setQty] = React.useState('');
+  const dispatch = useDispatch();
+  const validateCartAddButton = React.useMemo(() => {
+    return qty === '' ? true : false;
+  }, [qty]);
   return (
     <View style={{marginVertical: scale(5, 0)}}>
       <View
@@ -54,6 +61,8 @@ const ItemView = props => {
                 mode="outlined"
                 placeholder="Qty"
                 style={{height: scale(40, 0)}}
+                value={qty}
+                onChangeText={text => setQty(text)}
               />
             </View>
             <View style={{flex: 0.9}}>
@@ -71,8 +80,19 @@ const ItemView = props => {
               theme={{
                 colors: {primary: 'red', accent: 'red', secondary: 'red'},
               }}
+              disabled={validateCartAddButton}
               onPress={() => {
-                console.log('Pressed on : ', props);
+                const itemDetails = {
+                  ...props,
+                  orderDetails: {
+                    unit: units[selectedUnitIndex]?.value,
+                    qty: qty,
+                  },
+                };
+                crtIcon
+                  ? dispatch(addItem(itemDetails))
+                  : dispatch(removeItem(props.id));
+
                 setCrtIcon(!crtIcon);
               }}
             />
@@ -96,11 +116,6 @@ const RenderVendorCardItem = props => {
         }}>
         <View
           style={{
-            flex: 0.3,
-            borderWidth: 1,
-          }}></View>
-        <View
-          style={{
             flex: 0.7,
             borderWidth: 1,
             justifyContent: 'center',
@@ -110,12 +125,20 @@ const RenderVendorCardItem = props => {
           <Text>Shop Number</Text>
           <Text>shopCategory</Text>
         </View>
+        <View
+          style={{
+            flex: 0.3,
+            borderWidth: 1,
+          }}></View>
       </View>
-      <HeaderTextComponent headerText={'My Offerings: '} />
+      {/* <HeaderTextComponent headerText={'My Offerings: '} /> */}
       <View>
         {vendorItem?.item?.items.map((item, index) => {
           return (
             <ItemView
+              id={`iid-${item.id}-id-${Date.now()}-${Math.random()
+                .toString(36)
+                .substr(2, 9)}`}
               shopDetails={vendorItem?.item?.shopDetails}
               key={index}
               name={item?.name}
@@ -133,6 +156,14 @@ const LocalMktDeepDive = props => {
   const {route} = props;
   const theme = useTheme();
   const styles = makeStyles(theme);
+  const [vendorList, setVendorList] = React.useState([]);
+  React.useEffect(() => {
+    // Ensure vendorList is set only once
+    const newVendorList = MARKET_DEEPDIVE_PAYLOAD.vendorList.map(
+      item => item.shopDetails,
+    );
+    setVendorList(newVendorList);
+  }, [MARKET_DEEPDIVE_PAYLOAD.vendorList]);
   return (
     <View style={styles.container}>
       <Text
@@ -142,7 +173,48 @@ const LocalMktDeepDive = props => {
         }}>
         {route.params.routeParam.marketName}
       </Text>
-      <CustomFlatList
+      <View
+        style={{
+          flex: 0.3,
+        }}>
+        <CustomFlatList
+          config={{
+            horizontal: true,
+            showsHorizontalScrollIndicator: false,
+          }}
+          data={vendorList}
+          renderItem={({item: mItem, index}) => (
+            <View key={index}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  flex: 1,
+                  width: scale(280, 0),
+                  margin: scale(5, 0),
+                }}>
+                <View
+                  style={{
+                    flex: 0.7,
+                    borderWidth: 1,
+                    justifyContent: 'space-between',
+                  }}>
+                  <Text>{mItem.shopName}</Text>
+                  <Text>{mItem.vendorName}</Text>
+                  <Text>{mItem.vendorId}</Text>
+                  <Text>{mItem.shopCategory}</Text>
+                </View>
+                <View
+                  style={{
+                    flex: 0.3,
+                    borderWidth: 1,
+                  }}></View>
+              </View>
+            </View>
+          )}
+        />
+      </View>
+
+      {/* <CustomFlatList
         config={{
           scrollEnabled: true,
         }}
@@ -150,7 +222,7 @@ const LocalMktDeepDive = props => {
         renderItem={(item, index) => {
           return <RenderVendorCardItem key={index} vendorItem={item} />;
         }}
-      />
+      /> */}
     </View>
   );
 };
@@ -169,9 +241,9 @@ const vendorCardStyle = theme =>
   StyleSheet.create({
     mcontainer: {
       flex: 1,
-      borderWidth: 2,
-      borderColor: theme.colors.primary,
-      marginHorizontal: scale(15, 0),
-      marginVertical: scale(5, 0),
+      // borderWidth: 2,
+      // borderColor: theme.colors.primary,
+      marginHorizontal: scale(5, 0),
+      marginVertical: scale(15, 0),
     },
   });

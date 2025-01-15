@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React from 'react';
+import React, {Children} from 'react';
 import MktCard from './MktCard';
 import {DASHBOARD_PAYLOAD} from '../../samplePayloads/dasboardPayload';
 import {Chip, useTheme} from 'react-native-paper';
@@ -19,78 +19,27 @@ import CustomFlatList from '../../components/CustomFlatList/CustomFlatList';
 import Svg, {SvgXml} from 'react-native-svg';
 import HeaderTextComponent from '../../components/HeaderTextComponent/HeaderTextComponent';
 import {useNavigation} from '@react-navigation/native';
+import ShimmerEffect from '../../components/shmmerEffect/ShimmerEffect';
 
 const Dashboard = () => {
   const theme = useTheme();
   const styles = makeStyles(theme);
-  const defaultDataWith6Colors = React.useMemo(
-    () => ['#B0604D', '#899F9C', '#B3C680', '#5C6265', '#F5D399', '#F1F1F1'],
-    [],
-  );
   const navigation = useNavigation();
-  const carousalConfig = React.useMemo(
-    () => ({
-      autoPlayInterval: 2000,
-      autoPlay: true,
-      height: scale(258),
-      loop: true,
-      pagingEnabled: true,
-      snapEnabled: true,
-      width: Dimensions.get('window').width,
-      mode: 'parallax',
-      modeConfig: {
-        parallaxScrollingScale: 0.9,
-        parallaxScrollingOffset: 50,
-      },
-    }),
-    [],
-  );
-  const renderCarouselItem = React.useCallback(
-    ({item, index}) => (
-      // console.log(`item: ${JSON.stringify(item)}`);
-      <View style={{flex: 1, justifyContent: 'center', borderWidth: 1}}>
-        {console.log(`item: ${JSON.stringify(item)}`)}
-        <Image
-          style={{
-            width: '100%',
-            height: '100%',
-          }}
-          source={{
-            uri: item?.backgroundImageUrl,
-          }}
-        />
-      </View>
-    ),
-    [],
-  );
-  const renderHorizontalFlatList = React.useCallback(
-    ({item, index}, isTopCategoryNavigation) => (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          backgroundColor: '#ecffe8',
-          width: isTopCategoryNavigation ? scale(80, 0) : scale(250, 0),
-          height: isTopCategoryNavigation ? scale(80, 0) : scale(200, 0),
-          borderRadius: isTopCategoryNavigation ? scale(100, 0) : 0,
-          margin: scale(5, 0),
-          alignItems: 'center',
-        }}>
-        {/* {console.log(`isTopCat: ${isTopCategoryNavigation}`)} */}
-        {isTopCategoryNavigation ? (
-          <>
-            <SvgXml height="50%" width="50%" xml={item.icon}></SvgXml>
-            <Text>{item.title}</Text>
-          </>
-        ) : (
-          <>
-            <Text>{index}</Text>
-          </>
-        )}
-      </View>
-    ),
-    [],
-  );
+  const carousalConfig = {
+    autoPlayInterval: 2000,
+    autoPlay: true,
+    height: scale(158),
+    loop: true,
+    pagingEnabled: true,
+    snapEnabled: true,
+    width: Dimensions.get('window').width,
+    mode: 'parallax',
+    modeConfig: {
+      parallaxScrollingScale: 0.9,
+      parallaxScrollingOffset: 50,
+    },
+  };
+
   const handleGridViewMore = navigationInfo => {
     navigation.navigate(navigationInfo.navKey, navigationInfo);
   };
@@ -106,9 +55,12 @@ const Dashboard = () => {
           height: scale(230, 0),
           margin: scale(5, 0),
           borderWidth: 1,
+          borderRadius: scale(8, 0),
         }}>
         <Text style={{textAlign: 'center'}}>{item.mktName}</Text>
-        <View style={{flex: 0.6, borderWidth: 1}}></View>
+        <View style={{flex: 0.6, borderWidth: 1}}>
+          <Image source={{uri: item?.img}} style={{flex: 1}} />
+        </View>
         <View
           style={{
             flex: 0.2,
@@ -143,64 +95,83 @@ const Dashboard = () => {
           onPress={() => {
             handleGridViewMore(item.redirection);
           }}>
-          <Text style={{fontSize: scale(18, 0)}}>Get In The Market</Text>
+          <ShimmerEffect style={styles.shimmerBox} />
+          <Text
+            style={{fontSize: scale(18, 0), color: theme.colors.headLineText}}>
+            Get In The Market
+          </Text>
         </TouchableOpacity>
       </View>
     ),
     [],
   );
   return (
-    <View style={styles.container}>
-      <ScrollView>
-        {DASHBOARD_PAYLOAD.map((item, index) => {
-          return item.viewType == 'carousal' ? (
-            <CustomCarousal
-              config={carousalConfig}
+    <ScrollView style={styles.container} nestedScrollEnabled={true}>
+      {DASHBOARD_PAYLOAD.map((item, index) => {
+        return item.viewType == 'carousal' ? (
+          <CustomCarousal
+            config={carousalConfig}
+            data={item.content}
+            renderItem={(item, index) => {
+              return (
+                // <RenderCarouselItem>
+                <View
+                  style={{
+                    borderWidth: 1,
+                    flex: 1,
+                    borderRadius: scale(10, 0),
+                  }}>
+                  {console.log('item', item)}
+                </View>
+                /* </RenderCarouselItem> */
+              );
+            }}
+          />
+        ) : item.viewType == 'horizontalFlatList' ? (
+          <>
+            {!item.isTopCategoryNavigation && (
+              <HeaderTextComponent headerText={item.headLine} />
+            )}
+            <CustomFlatList
+              config={{
+                horizontal: true,
+                showsHorizontalScrollIndicator: false,
+              }}
               data={item.content}
-              renderItem={({item: mItem, index}) =>
-                renderCarouselItem({item: mItem, index})
-              }
+              renderItem={({item: mItem, index}) => {
+                return (
+                  <View
+                    style={{
+                      flex: 1,
+                      borderWidth: 1,
+                      width: scale(250, 0),
+                      margin: scale(10, 0),
+                      height: scale(150, 0),
+                    }}></View>
+                );
+              }}
             />
-          ) : item.viewType == 'horizontalFlatList' ? (
-            <>
-              {!item.isTopCategoryNavigation && (
-                <HeaderTextComponent headerText={'Featured Product'} />
-              )}
+          </>
+        ) : item.viewType == 'grid' ? (
+          <View>
+            <HeaderTextComponent headerText={`Local Market Near You..`} />
+            <View style={{paddingHorizontal: scale(10, 0)}}>
               <CustomFlatList
+                key={index}
                 config={{
-                  horizontal: true,
-                  showsHorizontalScrollIndicator: false,
+                  numColumns: item?.NumberOfColumns,
+                  scrollEnabled: false,
                 }}
                 data={item.content}
-                renderItem={({item: mItem, index}) =>
-                  renderHorizontalFlatList(
-                    {item: mItem, index},
-                    item.isTopCategoryNavigation,
-                  )
-                }
+                renderItem={renderGridItem}
               />
-            </>
-          ) : item.viewType == 'grid' ? (
-            <View>
-              <HeaderTextComponent headerText={`Local Market Near You..`} />
-              <View style={{paddingHorizontal: scale(10, 0)}}>
-                <CustomFlatList
-                  key={index}
-                  config={{
-                    numColumns: item?.NumberOfColumns,
-                    scrollEnabled: false,
-                  }}
-                  data={item.content}
-                  renderItem={renderGridItem}
-                />
-              </View>
             </View>
-          ) : (
-            <></>
-          );
-        })}
-      </ScrollView>
-    </View>
+          </View>
+        ) : (
+          <></>
+        );
+      })}
+    </ScrollView>
   );
 };
 
@@ -211,5 +182,12 @@ const makeStyles = theme =>
     container: {
       flex: 1,
       width: '100%',
+      backgroundColor: theme.colors.backgroundColor,
+    },
+    shimmerBox: {
+      position: 'absolute',
+      width: '100%',
+      height: '100%',
+      borderRadius: 8,
     },
   });
