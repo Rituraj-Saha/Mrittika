@@ -35,9 +35,13 @@ function App(): React.JSX.Element {
     colors: {
       ...DefaultTheme.colors,
       primary: '#3498db',
+      primaryContainer: "rgb(247, 236, 220)",
+      secondary: '#fca100',
       accent: '#f1c40f',
       selected: "#fca100",
-      backgroundColor: "#ffffff",
+      secondaryContainer: "rgb(255, 213, 150)",
+      backgroundColor: "rgba(255, 248, 239, 0.36)",
+      itemBackgroundColor: "rgba(189, 186, 187, 0.54)",
       headLineText: "#1a1a19"
     },
 

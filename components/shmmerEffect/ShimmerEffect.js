@@ -31,7 +31,7 @@ const ShimmerEffect = ({style}) => {
           },
         ]}>
         <LinearGradient
-          colors={['#e0e0e0', '#f5f5f5', '#e0e0e0']}
+          colors={['#fcab8340', '#dbcfc950', '#fcab83']}
           start={{x: 0, y: 0}}
           end={{x: 1, y: 0}}
           style={StyleSheet.absoluteFill}
@@ -43,7 +43,7 @@ const ShimmerEffect = ({style}) => {
 
 const styles = StyleSheet.create({
   shimmerWrapper: {
-    backgroundColor: '#e0e0e0', // Base color for shimmer
+    backgroundColor: '#f56d09', // Base color for shimmer
     overflow: 'hidden',
   },
 });

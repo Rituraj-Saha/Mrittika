@@ -77,7 +77,7 @@ export const DASHBOARD_PAYLOAD = [
             marketName: 'Sample Mkt Name',
           },
         },
-        categoryTags: ['Tag1', 'Tag2', 'Tag3', 'Tag4'],
+        categoryTags: ['Fish'],
       },
       {
         id: 3,

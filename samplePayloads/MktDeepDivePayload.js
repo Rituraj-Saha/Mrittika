@@ -43,7 +43,7 @@ export const MARKET_DEEPDIVE_PAYLOAD = {
       items: [
         {
           id: 4,
-          name: 'Pabda',
+          name: 'vetki',
           images: ['img1', 'img2', 'img3'],
           price: 200,
           discount: 20,
@@ -75,7 +75,7 @@ export const MARKET_DEEPDIVE_PAYLOAD = {
       items: [
         {
           id: 7,
-          name: 'Pabda',
+          name: 'roi',
           images: ['img1', 'img2', 'img3'],
           price: 200,
           discount: 20,
@@ -107,7 +107,7 @@ export const MARKET_DEEPDIVE_PAYLOAD = {
       items: [
         {
           id: 10,
-          name: 'Pabda',
+          name: 'katla',
           images: ['img1', 'img2', 'img3'],
           price: 200,
           discount: 20,

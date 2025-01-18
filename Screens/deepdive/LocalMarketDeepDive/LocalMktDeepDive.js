@@ -1,7 +1,13 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {
+  Dimensions,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import React from 'react';
 import {IconButton, TextInput, useTheme} from 'react-native-paper';
-import {scale} from '../../../utils/responsiveDymentions';
+import {fullWidth, scale} from '../../../utils/responsiveDymentions';
 import HeaderTextComponent from '../../../components/HeaderTextComponent/HeaderTextComponent';
 import CustomFlatList from '../../../components/CustomFlatList/CustomFlatList';
 import {MARKET_DEEPDIVE_PAYLOAD} from '../../../samplePayloads/MktDeepDivePayload';
@@ -10,7 +16,7 @@ import History from '../../history/History';
 import {useDispatch} from 'react-redux';
 import {addItem, removeItem} from '../../../app/slice/cartSlice';
 
-const ItemView = props => {
+export const ItemView = props => {
   const {name, images, price, discount, shopDetails} = props;
   const units = [{value: 'gms'}, {value: 'kg'}];
   const [selectedUnitIndex, setSelectedUnitIndex] = React.useState(0);
@@ -107,47 +113,40 @@ const RenderVendorCardItem = props => {
   const theme = useTheme();
   const styles = vendorCardStyle(theme);
   const {vendorItem} = props;
+  console.log('reached');
+  console.log('vendorItem: ', vendorItem);
+
   return (
     <View style={styles.mcontainer}>
-      <View
-        style={{
-          flexDirection: 'row',
-          flex: 0.2,
-        }}>
-        <View
-          style={{
-            flex: 0.7,
-            borderWidth: 1,
-            justifyContent: 'center',
-          }}>
-          <Text>Shop Name</Text>
-          <Text>Vendor Name</Text>
-          <Text>Shop Number</Text>
-          <Text>shopCategory</Text>
-        </View>
-        <View
-          style={{
-            flex: 0.3,
-            borderWidth: 1,
-          }}></View>
-      </View>
       {/* <HeaderTextComponent headerText={'My Offerings: '} /> */}
       <View>
-        {vendorItem?.item?.items.map((item, index) => {
+        {/* {vendorItem?.item?.items?.map((item, index) => {
           return (
-            <ItemView
-              id={`iid-${item.id}-id-${Date.now()}-${Math.random()
-                .toString(36)
-                .substr(2, 9)}`}
-              shopDetails={vendorItem?.item?.shopDetails}
-              key={index}
-              name={item?.name}
-              images={item?.images}
-              price={item?.price}
-              discount={item?.discount}
-            />
+            // <ItemView
+            //   id={`iid-${item.id}-id-${Date.now()}-${Math.random()
+            //     .toString(36)
+            //     .substr(2, 9)}`}
+            //   shopDetails={vendorItem?.item?.shopDetails}
+            //   key={index}
+            //   name={item?.name}
+            //   images={item?.images}
+            //   price={item?.price}
+            //   discount={item?.discount}
+            // />
+            <>{console.log('item: ', item)}</>
           );
-        })}
+        })} */}
+        <ItemView
+          id={`iid-${vendorItem?.item?.id}-id-${Date.now()}-${Math.random()
+            .toString(36)
+            .substr(2, 9)}`}
+          shopDetails={vendorItem?.item?.shopDetails}
+          // key={index}
+          name={vendorItem?.item?.name}
+          images={vendorItem?.item?.images}
+          price={vendorItem?.item?.price}
+          discount={vendorItem?.item?.discount}
+        />
       </View>
     </View>
   );
@@ -157,6 +156,7 @@ const LocalMktDeepDive = props => {
   const theme = useTheme();
   const styles = makeStyles(theme);
   const [vendorList, setVendorList] = React.useState([]);
+  const [vendorSelectedIndex, setVendorSelectedIndex] = React.useState(0);
   React.useEffect(() => {
     // Ensure vendorList is set only once
     const newVendorList = MARKET_DEEPDIVE_PAYLOAD.vendorList.map(
@@ -164,6 +164,24 @@ const LocalMktDeepDive = props => {
     );
     setVendorList(newVendorList);
   }, [MARKET_DEEPDIVE_PAYLOAD.vendorList]);
+
+  // const handleVendorSelection = index => {
+  //   setVendorSelectedIndex(index);
+  // };
+  const venderListRef = React.useRef(null);
+  React.useEffect(() => {
+    console.log('scrolled index: ', vendorSelectedIndex);
+  }, [vendorSelectedIndex]);
+
+  const onViewableItemsChanged = React.useRef(({viewableItems}) => {
+    if (viewableItems && viewableItems.length > 0) {
+      setVendorSelectedIndex(viewableItems[0].index); // Update the currently visible index
+    }
+  }).current;
+
+  const viewabilityConfig = {
+    itemVisiblePercentThreshold: 50, // Trigger callback when 50% of the item is visible
+  };
   return (
     <View style={styles.container}>
       <Text
@@ -181,16 +199,26 @@ const LocalMktDeepDive = props => {
           config={{
             horizontal: true,
             showsHorizontalScrollIndicator: false,
+            pagingEnabled: true,
           }}
+          ref={venderListRef}
           data={vendorList}
           renderItem={({item: mItem, index}) => (
-            <View key={index}>
+            <View
+              key={index}
+              style={{
+                width: fullWidth,
+              }}>
               <View
                 style={{
                   flexDirection: 'row',
                   flex: 1,
-                  width: scale(280, 0),
-                  margin: scale(5, 0),
+                  width: fullWidth - 25,
+                  padding: scale(5, 0),
+                  margin: scale(10, 0),
+                  borderWidth: vendorSelectedIndex == index ? 2 : 0.5,
+                  borderColor: theme.colors.secondary,
+                  borderRadius: scale(10, 0),
                 }}>
                 <View
                   style={{
@@ -206,23 +234,35 @@ const LocalMktDeepDive = props => {
                 <View
                   style={{
                     flex: 0.3,
-                    borderWidth: 1,
+                    // borderWidth: 1,
                   }}></View>
               </View>
             </View>
           )}
+          onViewableItemsChanged={onViewableItemsChanged} // Pass the callback to detect visible items
+          viewabilityConfig={viewabilityConfig} // Pass the viewability configuration
         />
       </View>
 
-      {/* <CustomFlatList
-        config={{
-          scrollEnabled: true,
-        }}
-        data={MARKET_DEEPDIVE_PAYLOAD.vendorList}
-        renderItem={(item, index) => {
-          return <RenderVendorCardItem key={index} vendorItem={item} />;
-        }}
-      /> */}
+      <View
+        style={{
+          flex: 0.7,
+        }}>
+        {console.log(
+          'list: ',
+          MARKET_DEEPDIVE_PAYLOAD.vendorList[vendorSelectedIndex],
+        )}
+        <CustomFlatList
+          config={{
+            scrollEnabled: true,
+          }}
+          data={MARKET_DEEPDIVE_PAYLOAD.vendorList[vendorSelectedIndex].items}
+          renderItem={(item, index) => {
+            console.log('Reached');
+            return <RenderVendorCardItem key={index} vendorItem={item} />;
+          }}
+        />
+      </View>
     </View>
   );
 };
