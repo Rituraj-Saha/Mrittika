@@ -19,7 +19,7 @@ import {register} from 'react-native-bundle-splitter';
 import {COLORS, NAVIGATION_SCREEN_KEY} from '../../constants/Constants';
 import {Searchbar} from 'react-native-paper';
 import {SvgXml} from 'react-native-svg';
-import {cartSvg} from '../../constants/Svg';
+import {cartSvg, location, phone} from '../../constants/Svg';
 import useModal from '../../components/CustomModal/useModal';
 import CustomaModal from '../../components/CustomModal/CustomaModal';
 import {useDispatch, useSelector} from 'react-redux';
@@ -63,13 +63,20 @@ const TopBar = props => {
     };
   }, []);
   return (
-    <View
-      style={{flex: 0.2, gap: scale(5, 0), paddingHorizontal: scale(10, 0)}}>
+    <View style={styles.topBarContainer}>
       {!isKeyboardVisible && (
-        <View>
-          <Text>User Name</Text>
-          <Text>User phonenumber</Text>
-          <Text>User Current Location</Text>
+        <View style={styles.topPersonalContain}>
+          <View style={styles.topBarPersonalDetails}>
+            <Text style={styles.textStylePersonal}>Hi, Rituraj</Text>
+            <View style={styles.namePhoneContainer}>
+              <SvgXml height="100%" width="20%" xml={phone}></SvgXml>
+              <Text style={styles.textStylePersonal}>+91 9674345373</Text>
+            </View>
+          </View>
+          <View style={styles.locationContainer}>
+            <SvgXml height="100%" width="10%" xml={location}></SvgXml>
+            <Text style={styles.textStylePersonal}>68,Railwaypark,sodepur</Text>
+          </View>
         </View>
       )}
       <View
@@ -83,6 +90,7 @@ const TopBar = props => {
             onChangeText={setSearchQuery}
             value={searchQuery}
             style={{
+              backgroundColor: theme.colors.primaryContainer,
               height: scale(50, 0),
             }}
           />
@@ -201,12 +209,7 @@ const Home = () => {
   const dispatch = useDispatch();
   return (
     <NavigationContainer>
-      <View
-        style={{
-          minHeight: '100%',
-          maxHeight: '100%',
-          backgroundColor: theme.colors.backgroundColor,
-        }}>
+      <View style={styles.navContainer}>
         {/* <HomeScreen /> */}
         <TopBar
           open={open}
@@ -311,5 +314,37 @@ const makeStyle = theme =>
       padding: scale(10, 0),
       height: scale(35, 0),
       width: scale(35, 0),
+    },
+    topBarContainer: {
+      flex: 0.18,
+      gap: scale(10, 0),
+      paddingHorizontal: scale(10, 0),
+      borderBottomWidth: 0.5,
+      paddingBottom: scale(5, 0),
+      // justifyContent: 'space-between',
+    },
+    topBarPersonalDetails: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+    textStylePersonal: {
+      color: theme.colors.headLineText,
+      fontSize: scale(16, 0),
+      paddingLeft: scale(10, 0),
+      padding: scale(2, 0),
+    },
+    topPersonalContain: {gap: scale(5, 0)},
+    namePhoneContainer: {
+      flexDirection: 'row',
+      alignItems: 'flex-end',
+      justifyContent: 'flex-end',
+    },
+    locationContainer: {
+      flexDirection: 'row',
+    },
+    navContainer: {
+      minHeight: '100%',
+      maxHeight: '100%',
+      backgroundColor: '#FFFFFF',
     },
   });
