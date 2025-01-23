@@ -1,5 +1,6 @@
 import {
   Dimensions,
+  KeyboardAvoidingView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -15,26 +16,50 @@ import CustomRadioGroup from '../../../components/CustomRadioGroup/CustomRadioGr
 import History from '../../history/History';
 import {useDispatch} from 'react-redux';
 import {addItem, removeItem} from '../../../app/slice/cartSlice';
-
+import _ from 'lodash';
+import {Picker, DatePicker} from 'react-native-wheel-pick-2';
 export const ItemView = props => {
-  const {name, images, price, discount, shopDetails} = props;
+  const {
+    name,
+    images,
+    price,
+    discount,
+    shopDetails,
+    quantityProvided,
+    unitProvided,
+  } = props;
   const units = [{value: 'gms'}, {value: 'kg'}];
-  const [selectedUnitIndex, setSelectedUnitIndex] = React.useState(0);
+
+  const [selectedUnitIndex, setSelectedUnitIndex] = React.useState(
+    units.findIndex(item => item.value === unitProvided) === -1
+      ? 0
+      : units.findIndex(item => item.value === unitProvided),
+  );
   const handleSelection = idx => {
     setSelectedUnitIndex(idx);
   };
   const [crtIcon, setCrtIcon] = React.useState(true);
-  const [qty, setQty] = React.useState('');
+  const [qty, setQty] = React.useState(quantityProvided);
   const dispatch = useDispatch();
   const validateCartAddButton = React.useMemo(() => {
-    return qty === '' ? true : false;
+    return _.isEmpty(qty) || qty === '' ? true : false;
   }, [qty]);
+  const pickerData = [
+    {
+      unit: 'kg',
+      value: [1, 2, 3, 4, 5, 6, 8, 9, 10],
+    },
+    {
+      unit: 'gms',
+      value: [100, 200, 300, 400, 500, 600, 800, 900],
+    },
+  ];
   return (
-    <View style={{marginVertical: scale(5, 0)}}>
+    <View style={{marginVertical: scale(5, 0), height: scale(180, 0)}}>
       <View
         style={{
           flexDirection: 'row',
-          flex: 1,
+          flex: 0.9,
         }}>
         <View
           style={{
@@ -50,28 +75,57 @@ export const ItemView = props => {
           <View style={{flexDirection: 'row', gap: scale(10, 0)}}>
             <Text>{name}</Text>
             <Text>{`Price: Rs.${price}/kg`}</Text>
-            <Text>{`${discount}%off`}</Text>
+            {discount !== undefined && <Text>{`${discount}%off`}</Text>}
           </View>
 
           <View
             style={{
               flexDirection: 'row',
               alignItems: 'center',
-              height: scale(50, 0),
-              alignItems: 'center',
-              justifyContent: 'center',
+              // height: scale(50, 0),
             }}>
-            <View style={{height: scale(40, 0)}}>
-              <TextInput
+            {/* <TextInput
                 inputMode="decimal"
                 mode="outlined"
                 placeholder="Qty"
                 style={{height: scale(40, 0)}}
                 value={qty}
                 onChangeText={text => setQty(text)}
+                
+              /> */}
+            <View
+              style={
+                {
+                  // borderWidth: 1,
+                }
+              }>
+              <Picker
+                style={{
+                  width: scale(90),
+                  height: scale(90, 0),
+                  // borderWidth: 1,
+                }}
+                textColor={'black'}
+                textSize={scale(16)}
+                selectedValue={qty}
+                pickerData={
+                  pickerData.find(
+                    item => item.unit === units[selectedUnitIndex].value,
+                  ).value
+                }
+                onValueChange={value => {
+                  setQty(value);
+                }}
               />
             </View>
-            <View style={{flex: 0.9}}>
+
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                height: scale(90, 0),
+                // borderWidth: 1,
+              }}>
               <CustomRadioGroup
                 selectedIndex={selectedUnitIndex}
                 handleSelection={idx => {
@@ -80,30 +134,39 @@ export const ItemView = props => {
                 radioButtonContent={units}
               />
             </View>
-            <IconButton
-              icon={crtIcon ? 'cart-plus' : 'history'} // Icon name from MaterialCommunityIcons
-              size={25}
-              theme={{
-                colors: {primary: 'red', accent: 'red', secondary: 'red'},
-              }}
-              disabled={validateCartAddButton}
-              onPress={() => {
-                const itemDetails = {
-                  ...props,
-                  orderDetails: {
-                    unit: units[selectedUnitIndex]?.value,
-                    qty: qty,
-                  },
-                };
-                crtIcon
-                  ? dispatch(addItem(itemDetails))
-                  : dispatch(removeItem(props.id));
-
-                setCrtIcon(!crtIcon);
-              }}
-            />
           </View>
         </View>
+      </View>
+      <View
+        style={{
+          flex: 0.3,
+          borderWidth: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <IconButton
+          icon={crtIcon ? 'cart-plus' : 'history'} // Icon name from MaterialCommunityIcons
+          size={25}
+          style={{borderWidth: 1}}
+          theme={{
+            colors: {primary: 'red', accent: 'red', secondary: 'red'},
+          }}
+          disabled={validateCartAddButton}
+          onPress={() => {
+            const itemDetails = {
+              ...props,
+              orderDetails: {
+                unit: units[selectedUnitIndex]?.value,
+                qty: qty,
+              },
+            };
+            crtIcon
+              ? dispatch(addItem(itemDetails))
+              : dispatch(removeItem(props.id));
+
+            setCrtIcon(!crtIcon);
+          }}
+        />
       </View>
     </View>
   );
@@ -112,35 +175,16 @@ export const ItemView = props => {
 const RenderVendorCardItem = props => {
   const theme = useTheme();
   const styles = vendorCardStyle(theme);
-  const {vendorItem} = props;
-  console.log('reached');
-  console.log('vendorItem: ', vendorItem);
-
+  const {vendorItem, shopDetails} = props;
   return (
     <View style={styles.mcontainer}>
       {/* <HeaderTextComponent headerText={'My Offerings: '} /> */}
       <View>
-        {/* {vendorItem?.item?.items?.map((item, index) => {
-          return (
-            // <ItemView
-            //   id={`iid-${item.id}-id-${Date.now()}-${Math.random()
-            //     .toString(36)
-            //     .substr(2, 9)}`}
-            //   shopDetails={vendorItem?.item?.shopDetails}
-            //   key={index}
-            //   name={item?.name}
-            //   images={item?.images}
-            //   price={item?.price}
-            //   discount={item?.discount}
-            // />
-            <>{console.log('item: ', item)}</>
-          );
-        })} */}
         <ItemView
           id={`iid-${vendorItem?.item?.id}-id-${Date.now()}-${Math.random()
             .toString(36)
             .substr(2, 9)}`}
-          shopDetails={vendorItem?.item?.shopDetails}
+          shopDetails={shopDetails}
           // key={index}
           name={vendorItem?.item?.name}
           images={vendorItem?.item?.images}
@@ -169,9 +213,7 @@ const LocalMktDeepDive = props => {
   //   setVendorSelectedIndex(index);
   // };
   const venderListRef = React.useRef(null);
-  React.useEffect(() => {
-    console.log('scrolled index: ', vendorSelectedIndex);
-  }, [vendorSelectedIndex]);
+  React.useEffect(() => {}, [vendorSelectedIndex]);
 
   const onViewableItemsChanged = React.useRef(({viewableItems}) => {
     if (viewableItems && viewableItems.length > 0) {
@@ -183,87 +225,103 @@ const LocalMktDeepDive = props => {
     itemVisiblePercentThreshold: 50, // Trigger callback when 50% of the item is visible
   };
   return (
-    <View style={styles.container}>
-      <Text
-        style={{
-          paddingHorizontal: scale(10, 0),
-          paddingVertical: scale(15, 0),
-        }}>
-        {route.params.routeParam.marketName}
-      </Text>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
+      style={styles.container}>
       <View
         style={{
-          flex: 0.3,
+          flex: 1,
         }}>
-        <CustomFlatList
-          config={{
-            horizontal: true,
-            showsHorizontalScrollIndicator: false,
-            pagingEnabled: true,
-          }}
-          ref={venderListRef}
-          data={vendorList}
-          renderItem={({item: mItem, index}) => (
-            <View
-              key={index}
-              style={{
-                width: fullWidth,
-              }}>
+        <Text
+          style={{
+            paddingHorizontal: scale(10, 0),
+            paddingVertical: scale(15, 0),
+          }}>
+          {route.params.routeParam.marketName}
+        </Text>
+        <View
+          style={{
+            flex: 0.3,
+          }}>
+          <CustomFlatList
+            config={{
+              horizontal: true,
+              showsHorizontalScrollIndicator: false,
+              pagingEnabled: true,
+            }}
+            ref={venderListRef}
+            data={vendorList}
+            renderItem={({item: mItem, index}) => (
               <View
+                key={index}
                 style={{
-                  flexDirection: 'row',
-                  flex: 1,
-                  width: fullWidth - 25,
-                  padding: scale(5, 0),
-                  margin: scale(10, 0),
-                  borderWidth: vendorSelectedIndex == index ? 2 : 0.5,
-                  borderColor: theme.colors.secondary,
-                  borderRadius: scale(10, 0),
+                  width: fullWidth,
                 }}>
                 <View
                   style={{
-                    flex: 0.7,
-                    borderWidth: 1,
-                    justifyContent: 'space-between',
+                    flexDirection: 'row',
+                    flex: 1,
+                    width: fullWidth - 25,
+                    padding: scale(5, 0),
+                    margin: scale(10, 0),
+                    borderWidth: vendorSelectedIndex == index ? 2 : 0.5,
+                    borderColor: theme.colors.secondary,
+                    borderRadius: scale(10, 0),
                   }}>
-                  <Text>{mItem.shopName}</Text>
-                  <Text>{mItem.vendorName}</Text>
-                  <Text>{mItem.vendorId}</Text>
-                  <Text>{mItem.shopCategory}</Text>
+                  <View
+                    style={{
+                      flex: 0.7,
+                      borderWidth: 1,
+                      justifyContent: 'space-between',
+                    }}>
+                    <Text>{mItem.shopName}</Text>
+                    <Text>{mItem.vendorName}</Text>
+                    <Text>{mItem.vendorId}</Text>
+                    <Text>{mItem.shopCategory}</Text>
+                  </View>
+                  <View
+                    style={{
+                      flex: 0.3,
+                      // borderWidth: 1,
+                    }}></View>
                 </View>
-                <View
-                  style={{
-                    flex: 0.3,
-                    // borderWidth: 1,
-                  }}></View>
               </View>
-            </View>
-          )}
-          onViewableItemsChanged={onViewableItemsChanged} // Pass the callback to detect visible items
-          viewabilityConfig={viewabilityConfig} // Pass the viewability configuration
-        />
-      </View>
+            )}
+            onViewableItemsChanged={onViewableItemsChanged} // Pass the callback to detect visible items
+            viewabilityConfig={viewabilityConfig} // Pass the viewability configuration
+          />
+        </View>
 
-      <View
-        style={{
-          flex: 0.7,
-        }}>
-        {console.log(
-          'list: ',
-          MARKET_DEEPDIVE_PAYLOAD.vendorList[vendorSelectedIndex],
-        )}
-        <CustomFlatList
-          config={{
-            scrollEnabled: true,
-          }}
-          data={MARKET_DEEPDIVE_PAYLOAD.vendorList[vendorSelectedIndex].items}
-          renderItem={(item, index) => {
-            console.log('Reached');
-            return <RenderVendorCardItem key={index} vendorItem={item} />;
-          }}
-        />
+        <View
+          style={{
+            flex: 0.7,
+          }}>
+          <CustomFlatList
+            config={{
+              scrollEnabled: true,
+            }}
+            nestedScrollEnabled
+            keyExtractor={item => item.id}
+            keyboardShouldPersistTaps="handled"
+            contentContainerStyle={{paddingBottom: 50}}
+            data={MARKET_DEEPDIVE_PAYLOAD.vendorList[vendorSelectedIndex].items}
+            renderItem={(item, index) => {
+              return (
+                <RenderVendorCardItem
+                  key={index}
+                  vendorItem={item}
+                  shopDetails={
+                    MARKET_DEEPDIVE_PAYLOAD.vendorList[vendorSelectedIndex]
+                      .shopDetails
+                  }
+                />
+              );
+            }}
+          />
+        </View>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 

@@ -133,9 +133,7 @@ const Dashboard = () => {
                     borderWidth: 1,
                     flex: 1,
                     borderRadius: scale(10, 0),
-                  }}>
-                  {console.log('item', item)}
-                </View>
+                  }}></View>
                 /* </RenderCarouselItem> */
               );
             }}
