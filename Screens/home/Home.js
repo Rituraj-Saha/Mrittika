@@ -24,6 +24,8 @@ import useModal from '../../components/CustomModal/useModal';
 import CustomaModal from '../../components/CustomModal/CustomaModal';
 import {useDispatch, useSelector} from 'react-redux';
 import {resetCart} from '../../app/slice/cartSlice';
+import {SCREEN_NAME} from '../../app/slice/ScreenSlice';
+import Cart from '../modalScreens/Cart';
 const Stack = createNativeStackNavigator();
 
 const Dashboard = register({loader: () => import('../dashboard/Dashboard')});
@@ -32,7 +34,7 @@ const History = register({loader: () => import('../history/History')});
 const MKTDEEPDIVE = register({
   loader: () => import('../deepdive/LocalMarketDeepDive/LocalMktDeepDive'),
 });
-
+import {navigateToScreen} from '../../app/slice/ScreenSlice';
 const TopBar = props => {
   const navigation = useNavigation();
   const [searchQuery, setSearchQuery] = React.useState('');
@@ -41,6 +43,7 @@ const TopBar = props => {
   const [isKeyboardVisible, setKeyboardVisible] = React.useState(false);
   const {open, openModal, close, closeModal} = props;
   const cartItems = useSelector(state => state.cart.items);
+  const dispatch = useDispatch();
   React.useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
@@ -99,6 +102,7 @@ const TopBar = props => {
           style={{flex: 0.2}}
           onPress={() => {
             openModal();
+            dispatch(navigateToScreen(SCREEN_NAME.CART));
           }}>
           <SvgXml height="100%" width="100%" xml={cartSvg}></SvgXml>
           <Badge style={{position: 'absolute'}}>{cartItems.length}</Badge>
@@ -207,6 +211,9 @@ const Home = () => {
   const {open, close, openModal, closeModal} = useModal();
   const cartItems = useSelector(state => state.cart.items);
   const dispatch = useDispatch();
+  const modalScreen = useSelector(
+    state => state.modalScreenTransitionSlice.screenName,
+  );
   return (
     <NavigationContainer>
       <View style={styles.navContainer}>
@@ -243,15 +250,16 @@ const Home = () => {
         <BottomBar />
         {open && (
           <CustomaModal open={open} closeModal={closeModal}>
-            <View style={{flex: 1}}>
-              {console.log('cartItems: ', cartItems)}
+            {/* <View style={{flex: 1}}>
               <TouchableOpacity
                 onPress={() => {
                   dispatch(resetCart());
                 }}>
                 <Text>Reset</Text>
               </TouchableOpacity>
-            </View>
+            </View> */}
+            {console.log('modalScreen: ', modalScreen)}
+            {modalScreen === SCREEN_NAME.CART ? <Cart /> : <></>}
           </CustomaModal>
         )}
       </View>
