@@ -234,7 +234,6 @@ const ItemView = props => {
 };
 
 export default ItemView;
-
 const itemStyle = theme =>
   StyleSheet.create({
     itemContainer: {
