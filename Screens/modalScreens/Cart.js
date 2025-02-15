@@ -20,7 +20,6 @@ const Cart = () => {
   const selector = useSelector(state => state.cart.items);
   return (
     <View style={styles.cartContainer}>
-      <Text>Cart</Text>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : scale(50, 0)}
         style={styles.listContainer}>
@@ -34,7 +33,7 @@ const Cart = () => {
               <ItemView
                 id={item?.item?.id}
                 shopDetails={item?.item?.shopDetails}
-                // key={index}
+                key={index}
                 name={item?.item?.name}
                 images={item?.item?.images}
                 price={item?.item?.price}
@@ -51,7 +50,7 @@ const Cart = () => {
         onPress={() => {
           dispatch(navigateToScreen(SCREEN_NAME.ORDER_CHECKOUT));
         }}>
-        <Text>Proceed with oreder</Text>
+        <Text style={styles.btnText}>Proceed with oreder</Text>
       </TouchableOpacity>
     </View>
   );
@@ -63,15 +62,28 @@ const makeStyle = theme =>
   StyleSheet.create({
     cartContainer: {
       flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     listContainer: {
       flex: 0.92,
-      borderWidth: 1,
       paddingHorizontal: scale(5, 0),
+      width: '100%',
     },
     proceedButton: {
-      flex: 0.06,
+      flex: 0.08,
       borderWidth: 1,
       borderColor: theme.colors.secondary,
+      alignContent: 'center',
+      justifyContent: 'center',
+      borderRadius: scale(10, 0),
+      width: '80%',
+    },
+    btnText: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      // flex: 1,
+      // borderWidth: 1,
+      textAlign: 'center',
     },
   });

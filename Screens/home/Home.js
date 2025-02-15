@@ -35,6 +35,8 @@ const MKTDEEPDIVE = register({
   loader: () => import('../deepdive/LocalMarketDeepDive/LocalMktDeepDive'),
 });
 import {navigateToScreen} from '../../app/slice/ScreenSlice';
+import OrderCheckout from '../modalScreens/OrderCheckout';
+import ModalHeader from '../../components/modalHeader/ModalHeader';
 const TopBar = props => {
   const navigation = useNavigation();
   const [searchQuery, setSearchQuery] = React.useState('');
@@ -258,8 +260,23 @@ const Home = () => {
                 <Text>Reset</Text>
               </TouchableOpacity>
             </View> */}
-            {console.log('modalScreen: ', modalScreen)}
-            {modalScreen === SCREEN_NAME.CART ? <Cart /> : <></>}
+            <>
+              <ModalHeader
+                headerText={modalScreen}
+                backButtonClick={() => {
+                  modalScreen === SCREEN_NAME.ORDER_CHECKOUT
+                    ? dispatch(navigateToScreen(SCREEN_NAME.CART))
+                    : closeModal();
+                }}
+              />
+              {modalScreen === SCREEN_NAME.CART ? (
+                <Cart />
+              ) : modalScreen === SCREEN_NAME.ORDER_CHECKOUT ? (
+                <OrderCheckout />
+              ) : (
+                <></>
+              )}
+            </>
           </CustomaModal>
         )}
       </View>
@@ -283,7 +300,7 @@ const makeStyle = theme =>
       backgroundColor: theme.colors.backgroundColor,
     },
     bottombar: {
-      flex: 0.1,
+      flex: 0.05,
       flexDirection: 'row',
       borderTopStartRadius: scale(20, 0),
       borderTopEndRadius: scale(20, 0),
