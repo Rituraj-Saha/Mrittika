@@ -13,7 +13,11 @@ import {Badge, IconButton, TextInput, useTheme} from 'react-native-paper';
 import {scale} from '../../utils/responsiveDymentions';
 
 import {Chip} from 'react-native-paper';
-import {NavigationContainer, useNavigation} from '@react-navigation/native';
+import {
+  NavigationContainer,
+  useNavigation,
+  useNavigationState,
+} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {register} from 'react-native-bundle-splitter';
 import {COLORS, NAVIGATION_SCREEN_KEY} from '../../constants/Constants';
@@ -37,6 +41,26 @@ const MKTDEEPDIVE = register({
 import {navigateToScreen} from '../../app/slice/ScreenSlice';
 import OrderCheckout from '../modalScreens/OrderCheckout';
 import ModalHeader from '../../components/modalHeader/ModalHeader';
+const AddressBar = props => {
+  const theme = useTheme();
+  const styles = makeStyle(theme);
+
+  return (
+    <View style={styles.topPersonalContain}>
+      <View style={styles.topBarPersonalDetails}>
+        <Text style={styles.textStylePersonal}>Hi, Rituraj</Text>
+        <View style={styles.namePhoneContainer}>
+          <SvgXml height="100%" width="20%" xml={phone}></SvgXml>
+          <Text style={styles.textStylePersonal}>+91 9674345373</Text>
+        </View>
+      </View>
+      <View style={styles.locationContainer}>
+        <SvgXml height="100%" width="10%" xml={location}></SvgXml>
+        <Text style={styles.textStylePersonal}>68,Railwaypark,sodepur</Text>
+      </View>
+    </View>
+  );
+};
 const TopBar = props => {
   const navigation = useNavigation();
   const [searchQuery, setSearchQuery] = React.useState('');
@@ -46,6 +70,10 @@ const TopBar = props => {
   const {open, openModal, close, closeModal} = props;
   const cartItems = useSelector(state => state.cart.items);
   const dispatch = useDispatch();
+  const currentRouteName = useNavigationState(state => {
+    return state?.routes[state.index]?.name; // Get active screen name
+  });
+
   React.useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
@@ -68,26 +96,25 @@ const TopBar = props => {
     };
   }, []);
   return (
-    <View style={styles.topBarContainer}>
-      {!isKeyboardVisible && (
-        <View style={styles.topPersonalContain}>
-          <View style={styles.topBarPersonalDetails}>
-            <Text style={styles.textStylePersonal}>Hi, Rituraj</Text>
-            <View style={styles.namePhoneContainer}>
-              <SvgXml height="100%" width="20%" xml={phone}></SvgXml>
-              <Text style={styles.textStylePersonal}>+91 9674345373</Text>
-            </View>
-          </View>
-          <View style={styles.locationContainer}>
-            <SvgXml height="100%" width="10%" xml={location}></SvgXml>
-            <Text style={styles.textStylePersonal}>68,Railwaypark,sodepur</Text>
-          </View>
-        </View>
-      )}
+    <View
+      style={[
+        styles.topBarContainer,
+        currentRouteName === NAVIGATION_SCREEN_KEY.MKTDEEPDIVE && {flex: 0.1},
+      ]}>
+      {!isKeyboardVisible &&
+        currentRouteName !== NAVIGATION_SCREEN_KEY.MKTDEEPDIVE && (
+          <AddressBar />
+        )}
       <View
         style={[
           styles.topBarSearch,
-          {paddingVertical: isKeyboardVisible ? scale(15, 0) : scale(0, 0)},
+          {
+            paddingVertical:
+              isKeyboardVisible ||
+              currentRouteName === NAVIGATION_SCREEN_KEY.MKTDEEPDIVE
+                ? scale(15, 0)
+                : scale(0, 0),
+          },
         ]}>
         <View style={{flex: 0.9}}>
           <Searchbar
@@ -216,6 +243,7 @@ const Home = () => {
   const modalScreen = useSelector(
     state => state.modalScreenTransitionSlice.screenName,
   );
+
   return (
     <NavigationContainer>
       <View style={styles.navContainer}>
@@ -295,12 +323,13 @@ const makeStyle = theme =>
       flexDirection: 'row',
     },
     mContainer: {
-      flex: 0.8,
+      flex: 1,
       // borderWidth: 1,
       backgroundColor: theme.colors.backgroundColor,
     },
     bottombar: {
-      flex: 0.05,
+      // flex: 0.05,
+      height: scale(60),
       flexDirection: 'row',
       borderTopStartRadius: scale(20, 0),
       borderTopEndRadius: scale(20, 0),
@@ -341,7 +370,7 @@ const makeStyle = theme =>
       width: scale(35, 0),
     },
     topBarContainer: {
-      flex: 0.18,
+      flex: 0.2,
       gap: scale(10, 0),
       paddingHorizontal: scale(10, 0),
       borderBottomWidth: 0.5,

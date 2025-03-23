@@ -9,6 +9,7 @@ const CustomFlatList = props => {
       {...config}
       data={data}
       renderItem={renderItem}
+      keyExtractor={(item, index) => index}
       viewPosition={0.5}
       onViewableItemsChanged={onViewableItemsChanged} // Pass the callback for detecting visible items
       viewabilityConfig={viewabilityConfig} // Pass the viewability config

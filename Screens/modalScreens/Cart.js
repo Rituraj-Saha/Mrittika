@@ -11,8 +11,10 @@ import {useDispatch, useSelector} from 'react-redux';
 import {SCREEN_NAME} from '../../app/slice/ScreenSlice';
 import {navigateToScreen} from '../../app/slice/ScreenSlice';
 import CustomFlatList from '../../components/CustomFlatList/CustomFlatList';
-import {ItemView} from '../deepdive/LocalMarketDeepDive/LocalMktDeepDive';
 import {scale} from '../../utils/responsiveDymentions';
+import ItemView from '../../components/ItemView/ItemView';
+import {resetCart} from '../../app/slice/cartSlice';
+import {ITEMVIEW_USED_FOR} from '../../constants/Constants';
 const Cart = () => {
   const theme = useTheme();
   const styles = makeStyle(theme);
@@ -33,13 +35,13 @@ const Cart = () => {
               <ItemView
                 id={item?.item?.id}
                 shopDetails={item?.item?.shopDetails}
-                key={index}
                 name={item?.item?.name}
                 images={item?.item?.images}
                 price={item?.item?.price}
                 discount={item?.item?.discount}
                 quantityProvided={item?.item?.orderDetails?.qty}
                 unitProvided={item?.item?.orderDetails?.unit}
+                isViewedFor={ITEMVIEW_USED_FOR.CART}
               />
             );
           }}
@@ -48,7 +50,8 @@ const Cart = () => {
       <TouchableOpacity
         style={styles.proceedButton}
         onPress={() => {
-          dispatch(navigateToScreen(SCREEN_NAME.ORDER_CHECKOUT));
+          // dispatch(navigateToScreen(SCREEN_NAME.ORDER_CHECKOUT));
+          dispatch(resetCart());
         }}>
         <Text style={styles.btnText}>Proceed with oreder</Text>
       </TouchableOpacity>

@@ -7,3 +7,7 @@ export const NAVIGATION_SCREEN_KEY = {
 export const COLORS = {
   selected: '#f7ddfe',
 };
+export const ITEMVIEW_USED_FOR = {
+  MARKET_DEEPDIVE: 'MktDeepDive',
+  CART: 'Cart',
+};

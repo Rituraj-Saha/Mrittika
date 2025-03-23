@@ -18,6 +18,7 @@ import {useDispatch} from 'react-redux';
 import {addItem, removeItem} from '../../../app/slice/cartSlice';
 import _ from 'lodash';
 import ItemView from '../../../components/ItemView/ItemView';
+import {ITEMVIEW_USED_FOR} from '../../../constants/Constants';
 
 const RenderVendorCardItem = props => {
   const theme = useTheme();
@@ -37,6 +38,7 @@ const RenderVendorCardItem = props => {
           images={vendorItem?.item?.images}
           price={vendorItem?.item?.price}
           discount={vendorItem?.item?.discount}
+          isViewedFor={ITEMVIEW_USED_FOR.MARKET_DEEPDIVE}
         />
       </View>
     </View>

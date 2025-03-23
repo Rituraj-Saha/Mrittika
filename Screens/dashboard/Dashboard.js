@@ -20,7 +20,6 @@ import Svg, {SvgXml} from 'react-native-svg';
 import HeaderTextComponent from '../../components/HeaderTextComponent/HeaderTextComponent';
 import {useNavigation} from '@react-navigation/native';
 import ShimmerEffect from '../../components/shmmerEffect/ShimmerEffect';
-import {ItemView} from '../deepdive/LocalMarketDeepDive/LocalMktDeepDive';
 import LinearGradient from 'react-native-linear-gradient';
 
 const Dashboard = () => {

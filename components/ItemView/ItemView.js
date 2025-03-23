@@ -7,6 +7,13 @@ import {scale} from '../../utils/responsiveDymentions';
 
 import {Picker, DatePicker} from 'react-native-wheel-pick-2';
 import CustomRadioGroup from '../CustomRadioGroup/CustomRadioGroup';
+import {addItem, removeItem} from '../../app/slice/cartSlice';
+import {ITEMVIEW_USED_FOR} from '../../constants/Constants';
+import {useCartUtilGetItemById} from '../../utils/useCartUtil';
+
+const buttomBar = props => {
+  const {isViewedFor} = props;
+};
 const ItemView = props => {
   const {
     name,
@@ -37,7 +44,7 @@ const ItemView = props => {
   const handleSelection = idx => {
     setSelectedUnitIndex(idx);
   };
-  const [crtIcon, setCrtIcon] = React.useState(true);
+
   const [qty, setQty] = React.useState(
     quantityProvided === undefined
       ? pickerData.find(item => item.unit === units[selectedUnitIndex].value)
@@ -53,14 +60,13 @@ const ItemView = props => {
   const styles = itemStyle(theme);
   const discountedPrice =
     discount === undefined ? price : price - (discount / price) * 100;
-  console.log('discouted: ', discountedPrice);
+
   const calcutedPrice =
     selectedUnitIndex === 0
       ? ((Number(discountedPrice) * Number(qty)) / 1000).toFixed(2)
       : (discountedPrice * qty).toFixed(2);
-  {
-    console.log(`${calcutedPrice}`);
-  }
+
+  const itemStatus = useCartUtilGetItemById(props.id);
   return (
     <View style={styles.itemContainer}>
       <View
@@ -198,21 +204,7 @@ const ItemView = props => {
           justifyContent: 'center',
           flexDirection: 'row',
         }}>
-        {/* <Text>Add to CART</Text> */}
-
         <Text
-          style={{
-            color: 'black',
-            fontSize: scale(18, 0),
-          }}>{`${calcutedPrice}`}</Text>
-        <IconButton
-          icon={crtIcon ? 'cart-plus' : 'history'} // Icon name from MaterialCommunityIcons
-          size={25}
-          style={{borderWidth: 1}}
-          theme={{
-            colors: {primary: 'red', accent: 'red', secondary: 'red'},
-          }}
-          disabled={validateCartAddButton}
           onPress={() => {
             const itemDetails = {
               ...props,
@@ -221,13 +213,18 @@ const ItemView = props => {
                 qty: qty,
               },
             };
-            crtIcon
+            _.isEmpty(itemStatus)
               ? dispatch(addItem(itemDetails))
               : dispatch(removeItem(props.id));
+          }}>
+          {_.isEmpty(itemStatus) ? `Add to CART` : `Remove From Cart`}
+        </Text>
 
-            setCrtIcon(!crtIcon);
-          }}
-        />
+        <Text
+          style={{
+            color: 'black',
+            fontSize: scale(18, 0),
+          }}>{`${calcutedPrice}`}</Text>
       </View>
     </View>
   );
